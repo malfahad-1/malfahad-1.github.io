@@ -1,0 +1,39 @@
+/* ============================================================
+   ALFAHA — RTL overrides (Arabic / عربي)
+   Loaded on every page; rules are scoped to [dir="rtl"] which
+   script.js sets on <html> when the Arabic language is chosen.
+   Physical properties (left/right, text-align) are mirrored here;
+   logical properties in style.css flip automatically.
+   ============================================================ */
+
+[dir="rtl"] body { font-family: "Cairo", "Inter", sans-serif; }
+
+/* Flip text alignment for elements that relied on default LTR */
+[dir="rtl"] .hero p.sub,
+[dir="rtl"] .section-head,
+[dir="rtl"] .card h3,
+[dir="rtl"] .card p,
+[dir="rtl"] .sku-body,
+[dir="rtl"] .about-grid p,
+[dir="rtl"] .form-group label,
+[dir="rtl"] input,
+[dir="rtl"] select,
+[dir="rtl"] textarea { text-align: right; }
+
+/* Timeline connectors flow right-to-left */
+[dir="rtl"] .step::after {
+  left: auto;
+  right: calc(50% + 24px);
+}
+
+/* Certs / badges row direction handled by dir; keep letter-spacing sane for Arabic */
+[dir="rtl"] .eyebrow,
+[dir="rtl"] .sku-code,
+[dir="rtl"] .cert-badge,
+[dir="rtl"] .logo { letter-spacing: 0; }
+
+/* Hamburger / nav positioning is already logical (inset-inline);
+   ensure the mobile nav opens below the header in RTL too. */
+[dir="rtl"] .main-nav { text-align: right; }
+
+/* WhatsApp float stays bottom corner — logical inset-inline-end already flips it. */
