@@ -1,7 +1,6 @@
 export async function onRequest(context) {
   const { request } = context;
 
-  // CORS headers
   const headers = {
     "Access-Control-Allow-Origin": "https://alfaha.me",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
@@ -9,7 +8,6 @@ export async function onRequest(context) {
     "Content-Type": "application/json",
   };
 
-  // Handle preflight
   if (request.method === "OPTIONS") {
     return new Response(null, { headers });
   }
@@ -19,12 +17,28 @@ export async function onRequest(context) {
   }
 
   try {
-    const { messages } = await request.json();
+    const { message, history, lang } = await request.json();
 
     const UNO_API_KEY = context.env.UNO_API_KEY;
     if (!UNO_API_KEY) {
       return new Response(JSON.stringify({ error: "Server misconfigured" }), { status: 500, headers });
     }
+
+    // System prompt per language
+    const systemPrompts = {
+      en: "You are the Alfaha Assistant, a helpful AI for Alfaha — a China-based sourcing company serving GCC importers. Answer concisely and professionally. Always encourage visitors to send detailed inquiries via the contact form or WhatsApp (+92 317 6547800). Company: Wuhan, China. Products: LED lighting, phone accessories, cleaning tools. Shipping: FOB/CIF to GCC. Certifications: SASO/SABER. Response time: 24-48h.",
+      ar: "أنت مساعد ألفاها، مساعد ذكي لشركة ألفاها للاستيراد من الصين لعملاء دول الخليج. أجب بإيجاز واحترافية باللغة العربية. شجع الزوار دائماً على إرسال استفسارات عبر النموذج أو واتساب (+92 317 6547800). الشركة في ووهان، الصين. المنتجات: إضاءة LED، إكسسوارات هاتف، أدوات تنظيف. الشحن: FOB/CIF للخليج. شهادات: SASO/SABER.",
+      zh: "你是Alfaha智能助手，为海湾地区进口商提供中国采购服务。请简明专业地用中文回答。始终建议访客通过联系表单或WhatsApp (+92 317 6547800) 发送详细询价。公司位于中国武汉。产品：LED照明、手机配件、清洁工具。运输：FOB/CIF至海湾地区。认证：SASO/SABER。回复时间：24-48小时。"
+    };
+
+    const systemPrompt = systemPrompts[lang] || systemPrompts.en;
+
+    // Build messages array for API
+    const messages = [
+      { role: "system", content: systemPrompt },
+      ...(history || []).slice(-10), // keep last 10 messages for context
+      { role: "user", content: message }
+    ];
 
     const response = await fetch("https://api.unorouter.com/v1/chat/completions", {
       method: "POST",
@@ -34,13 +48,7 @@ export async function onRequest(context) {
       },
       body: JSON.stringify({
         model: "deepseek-v4.1-flash-1017:free",
-        messages: [
-          {
-            role: "system",
-            content: "You are a helpful assistant for Alfaha, a China-based sourcing company serving GCC importers. You help visitors with product inquiries, shipping questions, and sourcing process. Be concise, professional, and always encourage them to send a detailed inquiry via the contact form or WhatsApp. Company info: based in Wuhan, China. Products: LED lighting, phone accessories, cleaning tools. Shipping: FOB/CIF to GCC. Certifications: SASO/SABER supported. Response time: 24-48h. Languages: English, Arabic, Chinese."
-          },
-          ...messages,
-        ],
+        messages,
         stream: false,
       }),
     });
@@ -56,6 +64,6 @@ export async function onRequest(context) {
     return new Response(JSON.stringify({ reply }), { status: 200, headers });
 
   } catch (err) {
-    return new Response(JSON.stringify({ error: "Internal error", details: err.message }), { status: 500, headers });
+    return new Response(JSON.stringify({ error: "Internal error" }), { status: 500, headers });
   }
 }
