@@ -13,7 +13,7 @@
 /* ---------------- Contact constants ---------------- */
 const WHATSAPP_NUMBER = "923176547800"; // international format, no "+"
 const EMAIL = "hello@alfaha.me";
-const FORMSPREE_ENDPOINT = "https://formspree.io/f/FORM_ID"; // TODO: replace with real Formspree ID
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/xqpqplqv"; // TODO: replace with real Formspree ID
 
 /* ---------------- Inline SVG icon system (professional line icons) ---------------- */
 /* Usage in HTML: <span data-icon="mail"></span> — injectIcons() swaps in the SVG. */
@@ -301,7 +301,7 @@ const I18N = {
     "form.name": "Full Name", "form.company": "Company", "form.email": "Email", "form.phone": "Phone / WhatsApp",
     "form.category": "Product Category", "form.qty": "Estimated Quantity", "form.message": "Message",
     "form.select": "— Select a category —", "form.other": "Other / Mixed",
-    "ph.name": "Muhammad Alfahad", "ph.company": "Your company LLC", "ph.email": "you@company.com", "ph.phone": "+971 5x xxx xxxx", "ph.qty": "e.g. 5,000 pcs", "ph.message": "Tell us the products, specs and target price…",
+    "ph.name": "Muhammad Alfahad", "ph.company": "Your company LLC", "ph.email": "you@company.com", "ph.phone": "+92 317 6547800", "ph.qty": "e.g. 5,000 pcs", "ph.message": "Tell us the products, specs and target price…",
     "form.submit": "Send Inquiry", "form.sending": "Sending…",
     "form.success": "✅ Thank you! Your inquiry was sent — we will reply within 24–48 hours.",
     "form.error": "❌ Something went wrong. Please try again, or contact us directly on WhatsApp.",
@@ -378,7 +378,7 @@ const I18N = {
     "form.name": "الاسم الكامل", "form.company": "الشركة", "form.email": "البريد الإلكتروني", "form.phone": "الهاتف / واتساب",
     "form.category": "فئة المنتج", "form.qty": "الكمية التقديرية", "form.message": "الرسالة",
     "form.select": "— اختر الفئة —", "form.other": "أخرى / متنوعة",
-    "ph.name": "محمد الفهد", "ph.company": "شركتك", "ph.email": "you@company.com", "ph.phone": "+971 5x xxx xxxx", "ph.qty": "مثال: 5,000 قطعة", "ph.message": "أخبرنا بالمنتجات والمواصفات والسعر المستهدف…",
+    "ph.name": "محمد الفهد", "ph.company": "شركتك", "ph.email": "you@company.com", "ph.phone": "+92 317 6547800", "ph.qty": "مثال: 5,000 قطعة", "ph.message": "أخبرنا بالمنتجات والمواصفات والسعر المستهدف…",
     "form.submit": "إرسال الاستفسار", "form.sending": "جارٍ الإرسال…",
     "form.success": "✅ شكراً لك! تم إرسال استفسارك — سنرد خلال 24–48 ساعة.",
     "form.error": "❌ حدث خطأ ما. حاول مرة أخرى أو تواصل معنا مباشرة على واتساب.",
@@ -455,7 +455,7 @@ const I18N = {
     "form.name": "姓名", "form.company": "公司", "form.email": "电子邮箱", "form.phone": "电话 / WhatsApp",
     "form.category": "产品类别", "form.qty": "预估数量", "form.message": "留言",
     "form.select": "— 请选择类别 —", "form.other": "其他 / 混合",
-    "ph.name": "您的姓名", "ph.company": "贵公司名称", "ph.email": "you@company.com", "ph.phone": "+971 5x xxx xxxx", "ph.qty": "如：5,000 件", "ph.message": "请告诉我们产品、规格和目标价格……",
+    "ph.name": "您的姓名", "ph.company": "贵公司名称", "ph.email": "you@company.com", "ph.phone": "+92 317 6547800", "ph.qty": "如：5,000 件", "ph.message": "请告诉我们产品、规格和目标价格……",
     "form.submit": "发送询盘", "form.sending": "发送中…",
     "form.success": "✅ 感谢您！询盘已发送——我们将在 24–48 小时内回复。",
     "form.error": "❌ 出现错误，请重试，或直接通过 WhatsApp 联系我们。",
@@ -611,9 +611,16 @@ function initMobileNav() {
   const toggle = document.querySelector(".nav-toggle");
   const nav = document.querySelector(".main-nav");
   if (toggle && nav) {
-    toggle.addEventListener("click", e => { e.stopPropagation(); nav.classList.toggle("open"); });
+    toggle.addEventListener("click", e => { 
+      e.stopPropagation(); 
+      const open = nav.classList.toggle("open");
+      toggle.setAttribute("aria-expanded", open);
+    });
     document.addEventListener("click", e => {
-      if (!nav.contains(e.target) && e.target !== toggle) nav.classList.remove("open");
+      if (!nav.contains(e.target) && e.target !== toggle) {
+        nav.classList.remove("open");
+        toggle.setAttribute("aria-expanded", "false");
+      }
     });
   }
 }
@@ -635,8 +642,11 @@ function prefillFromQuery() {
 
 function initFAQ() {
   document.querySelectorAll(".faq-q").forEach(q => {
-    q.addEventListener("click", () => q.closest(".faq-item").classList.toggle("open"));
-  });
+    q.addEventListener("click", () => {
+  const item = q.closest(".faq-item");
+  const open = item.classList.toggle("open");
+  q.setAttribute("aria-expanded", open);
+});
 }
 
 function validateForm(form) {
