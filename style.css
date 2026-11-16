@@ -524,6 +524,19 @@ h3 { font-size: 1.1rem; font-weight: 700; }
 .contact-side .info-card .card-icon .icon-svg { width: 21px; height: 21px; }
 .contact-side .info-card p, .contact-side .info-card a { font-size: 0.92rem; color: var(--muted); word-break: break-word; }
 .contact-side .info-card a:hover { color: var(--gold-dark); }
+.wechat-card { align-items: center; }
+.wechat-qr-link {
+  display: block;
+  flex: none;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--white);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.wechat-qr-link:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.wechat-qr { display: block; width: 128px; height: 128px; object-fit: cover; border-radius: 6px; }
+.wechat-details { min-width: 0; }
 .qr-placeholder {
   width: 110px; height: 110px; flex: none;
   border: 1.5px dashed var(--border);
