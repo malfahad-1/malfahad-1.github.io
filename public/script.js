@@ -643,11 +643,12 @@ function prefillFromQuery() {
 function initFAQ() {
   document.querySelectorAll(".faq-q").forEach(q => {
     q.addEventListener("click", () => {
-  const item = q.closest(".faq-item");
-  const open = item.classList.toggle("open");
-  q.setAttribute("aria-expanded", open);
-});
-}
+      const item = q.closest(".faq-item");
+      const open = item.classList.toggle("open");
+      q.setAttribute("aria-expanded", open);
+    });
+  });
+} 
 
 function validateForm(form) {
   let ok = true;
