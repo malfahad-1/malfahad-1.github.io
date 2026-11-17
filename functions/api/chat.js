@@ -138,11 +138,11 @@ Rules:
     ];
 
     const result = await env.AI.run(
-      "@cf/meta/llama-3.1-8b-instruct",
-      {
-        messages
-      }
-    );
+  "deepseek-v4.1-flash-1017",
+  {
+    messages
+  }
+);
 
     return new Response(
       JSON.stringify({
