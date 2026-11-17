@@ -137,25 +137,34 @@ Rules:
       }
     ];
 
-    const result = await env.AI.run(
+   const result = await env.AI.run(
   "deepseek-v4.1-flash-1017",
   {
-    messages
+    messages,
+    stream: false
   }
 );
 
-    return new Response(
-      JSON.stringify({
-        reply:
-          result.response ||
-          "Sorry, I couldn't generate a response."
-      }),
-      {
-        status: 200,
-        headers
-      }
-    );
+let reply = "";
 
+if (typeof result.response === "string") {
+  reply = result.response;
+} else if (typeof result === "string") {
+  reply = result;
+} else {
+  reply = JSON.stringify(result);
+}
+
+return new Response(
+  JSON.stringify({
+    reply
+  }),
+  {
+    status: 200,
+    headers
+  }
+);
+    
   } catch (error) {
     return new Response(
       JSON.stringify({
