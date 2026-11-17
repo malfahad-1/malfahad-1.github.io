@@ -1,52 +1,170 @@
 export async function onRequest(context) {
-  const { request } = context;
+  const { request, env } = context;
 
   const headers = {
-    "Access-Control-Allow-Origin": "https://alfaha.me",
+    "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
-    "Content-Type": "application/json",
+    "Content-Type": "application/json"
   };
 
+  // Handle CORS preflight
   if (request.method === "OPTIONS") {
-    return new Response(null, { headers });
+    return new Response(null, {
+      status: 204,
+      headers
+    });
   }
 
+  // Only POST allowed
   if (request.method !== "POST") {
-    return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405, headers });
+    return new Response(
+      JSON.stringify({
+        error: "Method not allowed"
+      }),
+      {
+        status: 405,
+        headers
+      }
+    );
   }
 
   try {
-    const { message, history, lang } = await request.json();
+    const body = await request.json();
 
-    const AI = context.env.AI;
-    if (!AI) {
-      return new Response(JSON.stringify({ error: "AI binding not found" }), { status: 500, headers });
+    const message = body.message || "";
+    const history = body.history || [];
+    const lang = body.lang || "en";
+
+    if (!message.trim()) {
+      return new Response(
+        JSON.stringify({
+          error: "Message is required"
+        }),
+        {
+          status: 400,
+          headers
+        }
+      );
     }
 
-    const systemPrompts = {
-      en: "You are the Alfaha Assistant, a helpful AI for Alfaha — a China-based sourcing company serving GCC importers. Answer concisely and professionally. Always encourage visitors to send detailed inquiries via the contact form or WhatsApp (+92 317 6547800). Company: Wuhan, China. Products: LED lighting, phone accessories, cleaning tools. Shipping: FOB/CIF to GCC. Certifications: SASO/SABER. Response time: 24-48h.",
-      ar: "أنت مساعد ألفاها، مساعد ذكي لشركة ألفاها للاستيراد من الصين لعملاء دول الخليج. أجب بإيجاز واحترافية باللغة العربية. شجع الزوار دائماً على إرسال استفسارات عبر النموذج أو واتساب (+92 317 6547800). الشركة في ووهان، الصين. المنتجات: إضاءة LED، إكسسوارات هاتف، أدوات تنظيف. الشحن: FOB/CIF للخليج. شهادات: SASO/SABER.",
-      zh: "你是Alfaha智能助手，为海湾地区进口商提供中国采购服务。请简明专业地用中文回答。始终建议访客通过联系表单或WhatsApp (+92 317 6547800) 发送详细询价。公司位于中国武汉。产品：LED照明、手机配件、清洁工具。运输：FOB/CIF至海湾地区。认证：SASO/SABER。回复时间：24-48小时。"
+    if (!env.AI) {
+      return new Response(
+        JSON.stringify({
+          error: "Workers AI binding not configured"
+        }),
+        {
+          status: 500,
+          headers
+        }
+      );
+    }
+
+    const prompts = {
+      en: `
+You are Alfaha Assistant.
+
+Company: Alfaha
+Location: Wuhan, China
+
+Services:
+- China sourcing
+- Factory verification
+- Quality inspection
+- Shipping to GCC countries
+- FOB and CIF logistics
+
+Products:
+- LED lighting
+- Phone accessories
+- Cleaning tools
+
+Rules:
+- Be professional.
+- Be concise.
+- Encourage customers to request a quotation.
+- Mention WhatsApp +92 317 6547800 when appropriate.
+      `,
+
+      ar: `
+أنت مساعد ألفاها.
+
+شركة متخصصة في التوريد من الصين إلى دول الخليج.
+
+الخدمات:
+- البحث عن الموردين
+- فحص المصانع
+- مراقبة الجودة
+- الشحن والخدمات اللوجستية
+
+المنتجات:
+- إضاءة LED
+- إكسسوارات الهواتف
+- أدوات التنظيف
+
+أجب بالعربية بشكل احترافي ومختصر.
+      `,
+
+      zh: `
+你是 Alfaha 智能助手。
+
+公司地点：中国武汉。
+
+业务：
+- 中国采购
+- 工厂审核
+- 质量检验
+- 海湾国家物流运输
+
+产品：
+- LED照明
+- 手机配件
+- 清洁工具
+
+回答要简洁专业。
+      `
     };
 
-    const systemPrompt = systemPrompts[lang] || systemPrompts.en;
-
     const messages = [
-      { role: "system", content: systemPrompt },
-      ...(history || []).slice(-10),
-      { role: "user", content: message }
+      {
+        role: "system",
+        content: prompts[lang] || prompts.en
+      },
+      ...history.slice(-10),
+      {
+        role: "user",
+        content: message
+      }
     ];
 
-    const result = await AI.run("@cf/meta/llama-3-8b-instruct", {
-      messages,
-    });
+    const result = await env.AI.run(
+      "@cf/meta/llama-3-8b-instruct",
+      {
+        messages
+      }
+    );
 
-    const reply = result.response || "Sorry, I couldn't process that.";
+    return new Response(
+      JSON.stringify({
+        reply:
+          result.response ||
+          "Sorry, I couldn't generate a response."
+      }),
+      {
+        status: 200,
+        headers
+      }
+    );
 
-    return new Response(JSON.stringify({ reply }), { status: 200, headers });
-
-  } catch (err) {
-    return new Response(JSON.stringify({ error: "Internal error" }), { status: 500, headers });
+  } catch (error) {
+    return new Response(
+      JSON.stringify({
+        error: error.message || "Internal server error"
+      }),
+      {
+        status: 500,
+        headers
+      }
+    );
   }
 }
