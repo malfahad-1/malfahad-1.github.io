@@ -111,7 +111,12 @@
       log.scrollTop = log.scrollHeight;
     } catch (e) {
       typing.classList.remove("acb-typing");
-      typing.innerHTML = s.offline + ' <a href="' + WHATSAPP_LINK + '" target="_blank" rel="noopener"><strong>+92 317 6547800</strong></a>';
+      typing.innerHTML =
+  s.offline +
+  ' <a href="' +
+  WHATSAPP_LINK +
+  '" target="_blank" rel="noopener noreferrer">' +
+  '<strong>+92 317 6547800</strong></a>';
       typing.classList.add("acb-offline");
     }
   }

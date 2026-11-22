@@ -1,20 +1,26 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
+  <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-PB8JXXQH"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Products — Alfaha</title>
-  <meta name="description" content="Alfaha product catalog: LED lighting, phone accessories and cleaning tools exported from verified Chinese factories to the GCC. Request quotes with MOQ and certifications." />
+  <title>About — Alfaha</title>
+  <meta name="description" content="Alfaha is a Wuhan-based sourcing agent helping GCC businesses import LED lighting, phone accessories and cleaning tools from verified Chinese factories. Commission-based, transparent." />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Alfaha" />
-  <meta property="og:title" content="Products — Alfaha" />
-  <meta property="og:description" content="LED lighting, phone accessories and cleaning tools from verified Chinese factories. Request product quotes with MOQ and certifications." />
-  <meta property="og:url" content="https://alfaha.me/products.html" />
+  <meta property="og:title" content="About — Alfaha" />
+  <meta property="og:description" content="Learn about Alfaha, a Wuhan-based sourcing partner helping GCC businesses import from verified Chinese factories." />
+  <meta property="og:url" content="https://alfaha.me/about.html" />
   <meta property="og:locale" content="en_US" />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Products — Alfaha" />
-  <meta name="twitter:description" content="LED lighting, phone accessories and cleaning tools from verified Chinese factories." />
-  <link rel="canonical" href="https://alfaha.me/products.html" />
+  <meta name="twitter:title" content="About Alfaha" />
+  <meta name="twitter:description" content="A Wuhan-based sourcing partner for GCC importers working with verified Chinese factories." />
+  <link rel="canonical" href="https://alfaha.me/about.html" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -24,15 +30,15 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    "name": "Alfaha Product Catalog",
-    "url": "https://alfaha.me/products.html",
-    "description": "LED lighting, phone accessories and cleaning tools sourced from verified Chinese factories for GCC importers.",
-    "isPartOf": {"@type": "WebSite", "name": "Alfaha", "url": "https://alfaha.me/"}
+    "@type": "AboutPage",
+    "name": "About Alfaha",
+    "url": "https://alfaha.me/about.html",
+    "about": {"@type": "Organization", "name": "Alfaha", "url": "https://alfaha.me/"},
+    "description": "About Alfaha, a Wuhan-based sourcing partner for GCC importers."
   }
   </script>
 </head>
-<body data-page="products">
+<body data-page="about">
 
   <!-- ================= TOP UTILITY BAR ================= -->
   <div class="topbar">
@@ -71,26 +77,49 @@
 
   <section class="page-hero">
     <div class="container">
-      <span class="eyebrow" data-i18n="feat.eyebrow">Featured Products</span>
-      <h1 data-i18n="prod.title">Product Catalog</h1>
-      <p data-i18n="prod.sub"></p>
+      <span class="eyebrow" data-i18n="about.story">Our Story</span>
+      <h1 data-i18n="about.page_title">About Alfaha</h1>
+      <p data-i18n="about.page_sub"></p>
     </div>
   </section>
 
   <section class="section">
-    <div class="container">
-      <!-- Category filter tabs -->
-      <div class="cat-tabs">
-        <button class="cat-tab active" data-filter="all" data-i18n="cat.all">All</button>
-        <button class="cat-tab" data-filter="led" data-i18n="cat.led">LED Lighting</button>
-        <button class="cat-tab" data-filter="phone" data-i18n="cat.phone">Phone Accessories</button>
-        <button class="cat-tab" data-filter="cleaning" data-i18n="cat.cleaning">Cleaning Tools</button>
+    <div class="container about-grid">
+      <div>
+        <span class="eyebrow left" data-i18n="about.story">Our Story</span>
+        <h2>Alfaha</h2>
+        <br />
+        <p data-i18n="about.p1"></p>
+        <p data-i18n="about.p2"></p>
       </div>
+      <aside>
+        <div class="info-card">
+          <h3 data-i18n="about.base">Operating Base</h3>
+          <ul><li><span data-icon="pin"></span><span data-i18n="about.base_val">Wuhan, Hubei, China 🇨🇳</span></li></ul>
+        </div>
+        <div class="info-card">
+          <h3 data-i18n="about.markets">Markets Served</h3>
+          <ul><li><span data-icon="globe"></span><span data-i18n="about.markets_val">UAE · Saudi Arabia · Qatar · Oman · Kuwait</span></li></ul>
+        </div>
+        <div class="info-card">
+          <h3 data-i18n="about.owner">Owner</h3>
+          <ul><li><span data-icon="user"></span><span data-i18n="about.owner_val">Muhammad Alfahad</span></li></ul>
+        </div>
+      </aside>
+    </div>
+  </section>
 
-      <!-- SKU cards rendered by script.js (renderSKUs) in the active language -->
-      <div class="sku-grid" id="sku-grid" data-filter="all"></div>
-
-      <p class="catalog-note" data-i18n="prod.note">⚠️ Catalogs & live prices sent on inquiry. Factory rates change weekly.</p>
+  <section class="section alt">
+    <div class="container">
+      <div class="section-head">
+        <h2 data-i18n="about.why">Why Choose Alfaha</h2>
+      </div>
+      <div class="why-grid">
+        <div class="why-item"><span class="card-icon" data-icon="pin"></span><h3 data-i18n="why.1">China-Based</h3><p data-i18n="why.1d"></p></div>
+        <div class="why-item"><span class="card-icon" data-icon="shield"></span><h3 data-i18n="why.2">Verified Suppliers</h3><p data-i18n="why.2d"></p></div>
+        <div class="why-item"><span class="card-icon" data-icon="coins"></span><h3 data-i18n="why.3">Transparent Pricing</h3><p data-i18n="why.3d"></p></div>
+        <div class="why-item"><span class="card-icon" data-icon="target"></span><h3 data-i18n="why.4">GCC-Focused</h3><p data-i18n="why.4d"></p></div>
+      </div>
     </div>
   </section>
 
