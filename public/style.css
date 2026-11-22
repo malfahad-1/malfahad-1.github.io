@@ -1060,55 +1060,65 @@ h3 { font-size: 1.1rem; font-weight: 700; }
 .text-center {
   text-align: center;
 }
-/* Trust Section */
+/* Trust Section — Professional Palette */
 .trust-section {
-  padding: 3rem 0;
-  background: #f8fafc;
+  padding: 3.5rem 0;
+  background: #ffffff;
+  border-top: 1px solid #e8ecf0;
+  border-bottom: 1px solid #e8ecf0;
 }
 
 .trust-badges {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 2rem;
-  margin-bottom: 3rem;
+  margin-bottom: 3.5rem;
 }
 
 .trust-badge {
   text-align: center;
-  padding: 1.5rem;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 2rem 1.5rem;
+  background: #f7f9fc;
+  border: 1px solid #e2e6eb;
+  border-radius: 6px;
+  transition: box-shadow 0.2s ease;
+}
+
+.trust-badge:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
 }
 
 .trust-icon {
-  font-size: 2.5rem;
+  font-size: 2.25rem;
   display: block;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .trust-badge h3 {
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
-  color: #1a1a1a;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #1a2b4a;
+  margin-bottom: 0.6rem;
+  letter-spacing: -0.01em;
 }
 
 .trust-badge p {
-  font-size: 0.9rem;
-  color: #666;
-  line-height: 1.5;
+  font-size: 0.88rem;
+  color: #4a5568;
+  line-height: 1.6;
 }
 
 /* Testimonials */
 .testimonials {
-  padding-top: 2rem;
-  border-top: 1px solid #e5e5e5;
+  padding-top: 2.5rem;
 }
 
 .testimonials h2 {
   text-align: center;
-  margin-bottom: 2rem;
-  font-size: 1.5rem;
+  margin-bottom: 2.5rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #1a2b4a;
 }
 
 .testimonial-grid {
@@ -1118,39 +1128,46 @@ h3 { font-size: 1.1rem; font-weight: 700; }
 }
 
 .testimonial-card {
-  background: #fff;
-  border: 1px solid #e5e5e5;
-  border-radius: 8px;
-  padding: 1.5rem;
+  background: #f7f9fc;
+  border: 1px solid #e2e6eb;
+  border-radius: 6px;
+  padding: 1.75rem;
 }
 
 .testimonial-card.placeholder {
   border-style: dashed;
-  opacity: 0.9;
+  border-color: #c8d0d8;
 }
 
 .stars {
-  color: #f59e0b;
-  font-size: 1.1rem;
-  margin-bottom: 0.75rem;
+  color: #d4a017;
+  font-size: 1rem;
+  margin-bottom: 0.85rem;
+  letter-spacing: 2px;
 }
 
 .testimonial-text {
   font-style: italic;
-  color: #555;
-  line-height: 1.6;
-  margin-bottom: 1rem;
+  color: #2d3748;
+  line-height: 1.65;
+  margin-bottom: 1.25rem;
+  font-size: 0.92rem;
 }
 
 .testimonial-author {
   font-weight: 600;
-  font-size: 0.9rem;
-  color: #1a1a1a;
+  font-size: 0.85rem;
+  color: #1a2b4a;
 }
 
 .testimonial-note {
   text-align: center;
-  margin-top: 1.5rem;
-  font-size: 0.9rem;
-  color: #666;
+  margin-top: 2rem;
+  font-size: 0.88rem;
+  color: #718096;
+}
+
+.testimonial-note a {
+  color: #2b6cb0;
+  font-weight: 500;
 }
