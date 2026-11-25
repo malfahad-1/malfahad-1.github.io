@@ -73,18 +73,8 @@
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": "https://alfaha.me/"
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Blog",
-        "item": "https://alfaha.me/blog/"
-      }
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://alfaha.me/" },
+      { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://alfaha.me/blog/" }
     ]
   }
   </script>
@@ -94,9 +84,11 @@
   <!-- TOP UTILITY BAR -->
   <div class="topbar">
     <div class="container topbar-inner">
-      <a href="mailto:hello@alfaha.me" class="topbar-link">✉ hello@alfaha.me</a>
-      <span class="topbar-hours">GMT+4 · 9:00 – 21:00</span>
-      <a href="https://wa.me/923176547800" target="_blank" rel="noopener" class="topbar-link">📞 +92 317 6547800</a>
+      <a href="mailto:hello@alfaha.me" class="topbar-link"><span data-icon="mail"></span>hello@alfaha.me</a>
+      <div class="topbar-right">
+        <span class="topbar-hours"><span data-icon="clock"></span><span data-i18n="side.hours_val">GMT+4 · 9:00 – 21:00</span></span>
+        <a href="https://wa.me/923176547800" target="_blank" rel="noopener" class="topbar-link"><span data-icon="whatsapp"></span><strong>+92 317 6547800</strong></a>
+      </div>
     </div>
   </div>
 
@@ -109,12 +101,12 @@
       </a>
       <nav class="main-nav" id="mainNav" aria-label="Main Navigation">
         <ul>
-          <li><a href="../index.html">Home</a></li>
-          <li><a href="../products.html">Products</a></li>
-          <li><a href="../services.html">Services</a></li>
-          <li><a href="../about.html">About</a></li>
+          <li><a href="../index.html" data-i18n="nav.home">Home</a></li>
+          <li><a href="../products.html" data-i18n="nav.products">Products</a></li>
+          <li><a href="../services.html" data-i18n="nav.services">Services</a></li>
+          <li><a href="../about.html" data-i18n="nav.about">About</a></li>
           <li><a class="active" href="index.html" aria-current="page">Blog</a></li>
-          <li><a href="../contact.html">Contact</a></li>
+          <li><a href="../contact.html" data-i18n="nav.contact">Contact</a></li>
         </ul>
       </nav>
       <div class="lang-switcher">
@@ -193,33 +185,35 @@
     <div class="container footer-grid">
       <div>
         <a class="logo" href="../index.html"><span class="logo-mark">A</span><span>ALFAH<em>A</em></span></a>
-        <p class="about-blurb">China sourcing &amp; export, dedicated to GCC markets. Verified factories, transparent pricing.</p>
+        <p class="about-blurb" data-i18n="footer.tagline">China sourcing &amp; export for the GCC. Verified factories, transparent pricing, no upfront fees.</p>
       </div>
       <div>
-        <h4>Quick Links</h4>
+        <h4 data-i18n="footer.links">Quick Links</h4>
         <ul>
-          <li><a href="../products.html">Products</a></li>
-          <li><a href="../services.html">Services</a></li>
-          <li><a href="../about.html">About</a></li>
-          <li><a href="../contact.html">Contact</a></li>
+          <li><a href="../products.html" data-i18n="nav.products">Products</a></li>
+          <li><a href="../services.html" data-i18n="nav.services">Services</a></li>
+          <li><a href="../about.html" data-i18n="nav.about">About</a></li>
           <li><a href="index.html">Blog</a></li>
+          <li><a href="../contact.html" data-i18n="nav.contact">Contact</a></li>
         </ul>
       </div>
       <div>
-        <h4>Contact</h4>
+        <h4 data-i18n="footer.contact">Contact</h4>
         <ul class="footer-contact">
-          <li><a href="https://wa.me/923176547800" target="_blank" rel="noopener">WhatsApp: +92 317 6547800</a></li>
-          <li><a href="mailto:hello@alfaha.me">hello@alfaha.me</a></li>
-          <li>WeChat: Malfahad</li>
-          <li>GMT+4 · 9:00 – 21:00</li>
+          <li><span data-icon="whatsapp"></span><a href="https://wa.me/923176547800" target="_blank" rel="noopener">+92 317 6547800 (WhatsApp)</a></li>
+          <li><span data-icon="mail"></span><a href="mailto:hello@alfaha.me">hello@alfaha.me</a></li>
+          <li><span data-icon="chat"></span><span>WeChat: Malfahad</span></li>
+          <li><span data-icon="clock"></span><span data-i18n="side.hours_val">GMT+4 · 9:00 – 21:00</span></li>
         </ul>
       </div>
     </div>
-    <div class="footer-bottom"><div class="container">© 2026 Alfaha · alfaha.me — All rights reserved.</div></div>
+    <div class="footer-bottom">
+      <div class="container" data-i18n="footer.rights">© 2026 Alfaha · alfaha.me — All rights reserved.</div>
+    </div>
   </footer>
 
   <!-- Floating WhatsApp button -->
-  <a class="wa-float" href="https://wa.me/923176547800" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">💬</a>
+  <a class="wa-float" href="https://wa.me/923176547800" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><span data-icon="whatsapp"></span></a>
 
   <script src="../script.js"></script>
   <script src="../chatbot.js" defer></script>
