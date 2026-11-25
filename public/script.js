@@ -4,7 +4,7 @@
    - Language switcher, ?lang= query support & localStorage persistence
    - RTL handling: sets <html dir="rtl"> for Arabic (rtl.css reacts)
    - Product catalog rendering + category filters (products.html)
-   - Quote pre-fill from products page (?product=SKU)
+   - Quote pre-fill from products page (?product=SKU or ?category=)
    - Contact form validation + Formspree submission
    ============================================================ */
 
@@ -609,10 +609,16 @@ function renderSKUs(filter) {
 }
 
 function initFilters() {
-  document.querySelectorAll(".cat-tab").forEach(tab => {
+  const tabs = document.querySelectorAll(".cat-tab");
+  tabs.forEach(tab => {
+    tab.setAttribute("aria-selected", String(tab.classList.contains("active")));
     tab.addEventListener("click", () => {
-      document.querySelectorAll(".cat-tab").forEach(t => t.classList.remove("active"));
+      tabs.forEach(t => {
+        t.classList.remove("active");
+        t.setAttribute("aria-selected", "false");
+      });
       tab.classList.add("active");
+      tab.setAttribute("aria-selected", "true");
       renderSKUs(tab.dataset.filter);
     });
   });
@@ -644,19 +650,29 @@ function initMobileNav() {
    Contact page: quote pre-fill + FAQ accordion + form
    ============================================================ */
 function prefillFromQuery() {
-  const sku = new URLSearchParams(window.location.search).get("product");
-  if (!sku) return;
-  const p = PRODUCTS.find(x => x.sku.toLowerCase() === sku.toLowerCase());
-  const msg = document.getElementById("f-message");
-  if (!p || !msg) return;
-  const lang = document.documentElement.lang.startsWith("zh")
-    ? "zh"
-    : document.documentElement.lang.startsWith("ar")
-      ? "ar"
-      : "en";
-  if (!msg.value) msg.value = `${I18N[lang]["prefill.quote"]}\n${p.sku} — ${p.name[lang]}`;
+  const params = new URLSearchParams(window.location.search);
+  const sku = params.get("product");
+  const cat = params.get("category");
   const catSel = document.getElementById("f-category");
-  if (catSel) catSel.value = p.cat;
+  const msg = document.getElementById("f-message");
+
+  if (sku) {
+    const p = PRODUCTS.find(x => x.sku.toLowerCase() === sku.toLowerCase());
+    if (p && msg) {
+      const lang = document.documentElement.lang.startsWith("zh")
+        ? "zh"
+        : document.documentElement.lang.startsWith("ar")
+          ? "ar"
+          : "en";
+      if (!msg.value) msg.value = `${I18N[lang]["prefill.quote"]}\n${p.sku} — ${p.name[lang]}`;
+      if (catSel) catSel.value = p.cat;
+    }
+  } else if (cat && catSel) {
+    const validCats = ["led", "phone", "cleaning", "other"];
+    if (validCats.includes(cat.toLowerCase())) {
+      catSel.value = cat.toLowerCase();
+    }
+  }
 }
 
 function initFAQ() {
