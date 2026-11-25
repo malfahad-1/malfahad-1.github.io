@@ -2,38 +2,84 @@
    ALFAHA — RTL overrides (Arabic / عربي)
    Loaded on every page; rules are scoped to [dir="rtl"] which
    script.js sets on <html> when the Arabic language is chosen.
-   Physical properties (left/right, text-align) are mirrored here;
-   logical properties in style.css flip automatically.
+   Physical properties (left/right, text-align) are mirrored here.
    ============================================================ */
 
-[dir="rtl"] body { font-family: "Cairo", "Inter", sans-serif; }
+[dir="rtl"] body {
+  font-family: "Cairo", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+}
 
-/* Flip text alignment for elements that relied on default LTR */
-[dir="rtl"] .hero p.sub,
-[dir="rtl"] .section-head,
+/* Flip text alignment for elements that default to left-aligned in LTR */
+[dir="rtl"] .hero-sub,
+[dir="rtl"] .page-hero p,
 [dir="rtl"] .card h3,
 [dir="rtl"] .card p,
 [dir="rtl"] .sku-body,
 [dir="rtl"] .about-grid p,
+[dir="rtl"] .why-item h3,
+[dir="rtl"] .why-item p,
+[dir="rtl"] .info-card h3,
+[dir="rtl"] .info-card p,
 [dir="rtl"] .form-group label,
+[dir="rtl"] .faq-q,
+[dir="rtl"] .faq-a,
+[dir="rtl"] .spec-table th,
+[dir="rtl"] .spec-table td,
+[dir="rtl"] .blog-card,
 [dir="rtl"] input,
 [dir="rtl"] select,
-[dir="rtl"] textarea { text-align: right; }
+[dir="rtl"] textarea {
+  text-align: right;
+}
 
-/* Timeline connectors flow right-to-left */
+/* Language switcher dropdown aligns to the inline-end (left) edge in RTL */
+[dir="rtl"] .lang-menu {
+  right: auto;
+  left: 0;
+}
+
+[dir="rtl"] .lang-menu button {
+  text-align: right;
+}
+
+/* Timeline connectors flow right-to-left (services.html) */
 [dir="rtl"] .step::after {
   left: auto;
   right: calc(50% + 24px);
 }
 
-/* Certs / badges row direction handled by dir; keep letter-spacing sane for Arabic */
+/* Keep letter-spacing natural for connected Arabic script */
 [dir="rtl"] .eyebrow,
 [dir="rtl"] .sku-code,
 [dir="rtl"] .cert-badge,
-[dir="rtl"] .logo { letter-spacing: 0; }
+[dir="rtl"] .info-card h3,
+[dir="rtl"] .blog-card-tag,
+[dir="rtl"] .logo {
+  letter-spacing: 0;
+}
 
-/* Hamburger / nav positioning is already logical (inset-inline);
-   ensure the mobile nav opens below the header in RTL too. */
-[dir="rtl"] .main-nav { text-align: right; }
+/* Mobile navigation alignment in RTL */
+[dir="rtl"] .main-nav {
+  text-align: right;
+}
 
-/* WhatsApp float stays bottom corner — logical inset-inline-end already flips it. */
+/* Mirror floating WhatsApp button & AI Chatbot launcher/panel to bottom-left in RTL */
+[dir="rtl"] .wa-float {
+  right: auto;
+  left: 24px;
+}
+
+[dir="rtl"] .acb-launcher {
+  right: auto;
+  left: 92px;
+}
+
+[dir="rtl"] .acb-panel {
+  right: auto;
+  left: 24px;
+}
+
+/* Checklist checkmark spacing in RTL */
+[dir="rtl"] .checklist li {
+  text-align: right;
+}
