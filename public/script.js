@@ -1,7 +1,7 @@
 /* ============================================================
    ALFAHA — script.js
    - Trilingual i18n (EN default / AR with RTL / ZH) via data-i18n
-   - Language switcher, preference persisted in localStorage
+   - Language switcher, ?lang= query support & localStorage persistence
    - RTL handling: sets <html dir="rtl"> for Arabic (rtl.css reacts)
    - Product catalog rendering + category filters (products.html)
    - Quote pre-fill from products page (?product=SKU)
@@ -15,8 +15,7 @@ const WHATSAPP_NUMBER = "923176547800"; // international format, no "+"
 const EMAIL = "hello@alfaha.me";
 const FORMSPREE_ENDPOINT = "https://formspree.io/f/xqpqplqv";
 
-/* ---------------- Inline SVG icon system (professional line icons) ---------------- */
-/* Usage in HTML: <span data-icon="mail"></span> — injectIcons() swaps in the SVG. */
+/* ---------------- Inline SVG icon system ---------------- */
 const ICONS = {
   search: '<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/>',
   factory: '<path d="M3 21h18"/><path d="M5 21V9l5 4V9l5 4V4h4v17"/>',
@@ -44,28 +43,31 @@ function svgIcon(name, extraClass) {
   return `<svg class="icon-svg ${filled ? "fill" : ""} ${extraClass || ""}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${path}</svg>`;
 }
 
-/* Inject SVGs into [data-icon] placeholders */
 function injectIcons() {
   document.querySelectorAll("[data-icon]").forEach(el => {
     el.innerHTML = svgIcon(el.dataset.icon);
   });
 }
 
-/* Category icon per SKU media block */
 const CAT_ICON = { led: "bulb", phone: "smartphone", cleaning: "broom" };
 
 /* ---------------- Scroll-reveal animation ---------------- */
 const revealIO = ("IntersectionObserver" in window)
   ? new IntersectionObserver(entries => {
       entries.forEach(e => {
-        if (e.isIntersecting) { e.target.classList.add("in"); revealIO.unobserve(e.target); }
+        if (e.isIntersecting) {
+          e.target.classList.add("in");
+          revealIO.unobserve(e.target);
+        }
       });
     }, { threshold: 0.1 })
   : null;
 
 function revealScan() {
   const targets = document.querySelectorAll(".card, .sku-card, .step, .why-item, .info-card, .stat");
-  targets.forEach(el => { if (!el.classList.contains("reveal")) el.classList.add("reveal"); });
+  targets.forEach(el => {
+    if (!el.classList.contains("reveal")) el.classList.add("reveal");
+  });
   if (revealIO) {
     document.querySelectorAll(".reveal:not(.in)").forEach(el => revealIO.observe(el));
   } else {
@@ -278,7 +280,7 @@ const I18N = {
     "serv.cta": "Request a Service Quote",
     "cat.all": "All", "cat.led": "LED Lighting", "cat.phone": "Phone Accessories", "cat.cleaning": "Cleaning Tools",
     "card.moq": "MOQ", "card.quote": "Request Quote",
-    "prod.title": "Product Catalog", "prod.sub": "12–15 active SKUs across three categories. Catalogs & live prices sent on inquiry.",
+    "prod.title": "Product Catalog", "prod.sub": "15 active SKUs across three categories. Catalogs & live prices sent on inquiry.",
     "prod.note": "⚠️ Catalogs & live prices sent on inquiry. Factory rates change weekly.",
     "svc.page_title": "Our Services", "svc.page_sub": "Everything between your inquiry and delivery — handled by one accountable partner.",
     "svc.cta_title": "Need a custom solution?", "svc.cta_sub": "Tell us what you need — we reply within 24–48 hours with a clear quote.",
@@ -486,24 +488,20 @@ const LANG_KEY = "alfaha_lang";
 const SUPPORTED = ["en", "ar", "zh"];
 
 function getSavedLang() {
+  const queryLang = new URLSearchParams(window.location.search).get("lang");
+  if (queryLang && SUPPORTED.includes(queryLang.toLowerCase())) {
+    return queryLang.toLowerCase();
+  }
+
   let lang = null;
   try { lang = localStorage.getItem(LANG_KEY); } catch (e) { /* storage blocked */ }
   if (!lang || !SUPPORTED.includes(lang)) {
-    // Light auto-detect from browser, fall back to English
     const nav = (navigator.language || "en").toLowerCase();
     lang = nav.startsWith("ar") ? "ar" : nav.startsWith("zh") ? "zh" : "en";
   }
   return lang;
 }
 
-/**
- * Applies a language to the whole page:
- * 1. Swaps every [data-i18n] text (innerHTML — dict content is trusted, first-party)
- * 2. Swaps [data-i18n-ph] placeholders
- * 3. Sets <html lang> and <html dir> — dir="rtl" activates rtl.css for Arabic
- * 4. Toggles body.lang-* class so the correct font stack is used
- * 5. Persists the choice in localStorage
- */
 function applyLang(lang, persist = true) {
   const dict = I18N[lang];
   if (!dict) return;
@@ -517,18 +515,15 @@ function applyLang(lang, persist = true) {
     if (dict[key] !== undefined) el.setAttribute("placeholder", dict[key]);
   });
 
-  // RTL handling: Arabic flips the entire document direction
   document.documentElement.setAttribute("lang", dict._htmlLang);
   document.documentElement.setAttribute("dir", dict._dir);
 
   document.body.classList.remove("lang-en", "lang-ar", "lang-zh");
   document.body.classList.add("lang-" + lang);
 
-  // Page <title> from data-page attribute
   const page = document.body.getAttribute("data-page");
   if (page && dict["title." + page]) document.title = dict["title." + page];
 
-  // Update switcher button (flag + current language name)
   const flagEl = document.querySelector(".lang-btn .flag");
   const nameEl = document.querySelector(".lang-btn .lang-current");
   if (flagEl) flagEl.textContent = dict._flag;
@@ -538,23 +533,38 @@ function applyLang(lang, persist = true) {
     b.classList.toggle("current", b.dataset.lang === lang)
   );
 
-  if (persist) { try { localStorage.setItem(LANG_KEY, lang); } catch (e) { /* ignore */ } }
+  if (persist) {
+    try { localStorage.setItem(LANG_KEY, lang); } catch (e) { /* ignore */ }
+  }
 
-  // Re-render language-dependent dynamic content (SKU cards use current lang)
   const grid = document.getElementById("sku-grid");
   if (grid) renderSKUs(grid.dataset.filter || "all");
 }
 
-/* Language switcher wiring (header dropdown) */
 function initLangSwitcher() {
+  const switcher = document.querySelector(".lang-switcher");
   const btn = document.querySelector(".lang-btn");
   const menu = document.querySelector(".lang-menu");
-  if (!btn || !menu) return;
-  btn.addEventListener("click", e => { e.stopPropagation(); menu.classList.toggle("open"); });
-  document.addEventListener("click", () => menu.classList.remove("open"));
-  menu.querySelectorAll("button").forEach(b =>
-    b.addEventListener("click", () => { applyLang(b.dataset.lang); menu.classList.remove("open"); })
-  );
+  if (!switcher || !btn || !menu) return;
+
+  btn.addEventListener("click", e => {
+    e.stopPropagation();
+    const isOpen = switcher.classList.toggle("open");
+    btn.setAttribute("aria-expanded", String(isOpen));
+  });
+
+  document.addEventListener("click", () => {
+    switcher.classList.remove("open");
+    btn.setAttribute("aria-expanded", "false");
+  });
+
+  menu.querySelectorAll("button").forEach(b => {
+    b.addEventListener("click", () => {
+      applyLang(b.dataset.lang, true);
+      switcher.classList.remove("open");
+      btn.setAttribute("aria-expanded", "false");
+    });
+  });
 }
 
 /* ============================================================
@@ -566,7 +576,11 @@ function renderSKUs(filter) {
   const grid = document.getElementById("sku-grid");
   if (!grid) return;
   grid.dataset.filter = filter;
-  const lang = document.documentElement.lang.startsWith("zh") ? "zh" : document.documentElement.lang.startsWith("ar") ? "ar" : "en";
+  const lang = document.documentElement.lang.startsWith("zh")
+    ? "zh"
+    : document.documentElement.lang.startsWith("ar")
+      ? "ar"
+      : "en";
   const dict = I18N[lang];
 
   const items = PRODUCTS.filter(p => filter === "all" || p.cat === filter);
@@ -591,7 +605,7 @@ function renderSKUs(filter) {
       </div>
     </article>
   `).join("");
-  revealScan();                     // observe newly rendered cards
+  revealScan();
 }
 
 function initFilters() {
@@ -610,19 +624,20 @@ function initFilters() {
 function initMobileNav() {
   const toggle = document.querySelector(".nav-toggle");
   const nav = document.querySelector(".main-nav");
-  if (toggle && nav) {
-    toggle.addEventListener("click", e => { 
-      e.stopPropagation(); 
-      const open = nav.classList.toggle("open");
-      toggle.setAttribute("aria-expanded", open);
-    });
-    document.addEventListener("click", e => {
-      if (!nav.contains(e.target) && e.target !== toggle) {
-        nav.classList.remove("open");
-        toggle.setAttribute("aria-expanded", "false");
-      }
-    });
-  }
+  if (!toggle || !nav) return;
+
+  toggle.addEventListener("click", e => {
+    e.stopPropagation();
+    const open = nav.classList.toggle("open");
+    toggle.setAttribute("aria-expanded", String(open));
+  });
+
+  document.addEventListener("click", e => {
+    if (!nav.contains(e.target) && e.target !== toggle) {
+      nav.classList.remove("open");
+      toggle.setAttribute("aria-expanded", "false");
+    }
+  });
 }
 
 /* ============================================================
@@ -634,7 +649,11 @@ function prefillFromQuery() {
   const p = PRODUCTS.find(x => x.sku.toLowerCase() === sku.toLowerCase());
   const msg = document.getElementById("f-message");
   if (!p || !msg) return;
-  const lang = document.documentElement.lang.startsWith("zh") ? "zh" : document.documentElement.lang.startsWith("ar") ? "ar" : "en";
+  const lang = document.documentElement.lang.startsWith("zh")
+    ? "zh"
+    : document.documentElement.lang.startsWith("ar")
+      ? "ar"
+      : "en";
   if (!msg.value) msg.value = `${I18N[lang]["prefill.quote"]}\n${p.sku} — ${p.name[lang]}`;
   const catSel = document.getElementById("f-category");
   if (catSel) catSel.value = p.cat;
@@ -644,22 +663,32 @@ function initFAQ() {
   document.querySelectorAll(".faq-q").forEach(q => {
     q.addEventListener("click", () => {
       const item = q.closest(".faq-item");
+      if (!item) return;
       const open = item.classList.toggle("open");
-      q.setAttribute("aria-expanded", open);
+      q.setAttribute("aria-expanded", String(open));
     });
   });
-} 
+}
 
 function validateForm(form) {
   let ok = true;
-  const lang = document.documentElement.lang.startsWith("zh") ? "zh" : document.documentElement.lang.startsWith("ar") ? "ar" : "en";
+  const lang = document.documentElement.lang.startsWith("zh")
+    ? "zh"
+    : document.documentElement.lang.startsWith("ar")
+      ? "ar"
+      : "en";
+
   form.querySelectorAll("[required]").forEach(field => {
     const group = field.closest(".form-group");
     const errEl = group ? group.querySelector(".err") : null;
     let valid = field.value.trim() !== "";
-    if (valid && field.type === "email") valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value.trim());
+    if (valid && field.type === "email") {
+      valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value.trim());
+    }
     if (group) group.classList.toggle("invalid", !valid);
-    if (errEl && !valid) errEl.textContent = I18N[lang][field.type === "email" ? "err.email" : "err.required"];
+    if (errEl && !valid) {
+      errEl.textContent = I18N[lang][field.type === "email" ? "err.email" : "err.required"];
+    }
     if (!valid) ok = false;
   });
   return ok;
@@ -669,17 +698,25 @@ function initContactForm() {
   const form = document.getElementById("quote-form");
   if (!form) return;
   const status = document.getElementById("form-status");
-  const lang = () => (document.documentElement.lang.startsWith("zh") ? "zh" : document.documentElement.lang.startsWith("ar") ? "ar" : "en");
+  const lang = () => (
+    document.documentElement.lang.startsWith("zh")
+      ? "zh"
+      : document.documentElement.lang.startsWith("ar")
+        ? "ar"
+        : "en"
+  );
 
   form.addEventListener("submit", async e => {
     e.preventDefault();
-    status.className = "form-status";
+    if (status) status.className = "form-status";
     if (!validateForm(form)) return;
 
     const dict = I18N[lang()];
     const btn = form.querySelector('button[type="submit"]');
-    btn.disabled = true;
-    btn.textContent = dict["form.sending"];
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = dict["form.sending"];
+    }
 
     try {
       const res = await fetch(FORMSPREE_ENDPOINT, {
@@ -688,16 +725,24 @@ function initContactForm() {
         body: new FormData(form)
       });
       if (res.ok) {
-        status.textContent = dict["form.success"];
-        status.classList.add("success");
+        if (status) {
+          status.textContent = dict["form.success"];
+          status.classList.add("success");
+        }
         form.reset();
-      } else throw new Error("HTTP " + res.status);
+      } else {
+        throw new Error("HTTP " + res.status);
+      }
     } catch (err) {
-      status.textContent = dict["form.error"];
-      status.classList.add("error");
+      if (status) {
+        status.textContent = dict["form.error"];
+        status.classList.add("error");
+      }
     } finally {
-      btn.disabled = false;
-      btn.textContent = dict["form.submit"];
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = dict["form.submit"];
+      }
     }
   });
 }
@@ -707,11 +752,10 @@ function initContactForm() {
    ============================================================ */
 document.addEventListener("DOMContentLoaded", () => {
   const lang = getSavedLang();
-  applyLang(lang, false);           // apply saved/browser language (no re-save needed yet)
-  try { localStorage.setItem(LANG_KEY, lang); } catch (e) { /* ignore */ }
+  applyLang(lang, true);
 
-  injectIcons();                    // swap [data-icon] placeholders for inline SVGs
-  revealScan();                     // enable scroll-reveal animations
+  injectIcons();
+  revealScan();
   initLangSwitcher();
   initMobileNav();
   initFilters();
@@ -719,9 +763,12 @@ document.addEventListener("DOMContentLoaded", () => {
   initFAQ();
   initContactForm();
 
-  // Reveal current page in nav
-  const path = location.pathname.split("/").pop() || "index.html";
+  const isBlog = window.location.pathname.includes("/blog/");
+  const file = window.location.pathname.split("/").pop() || "index.html";
   document.querySelectorAll(".main-nav a").forEach(a => {
-    if (a.getAttribute("href") === path) a.classList.add("active");
+    const href = a.getAttribute("href") || "";
+    const matchBlog = isBlog && href.includes("blog");
+    const matchFile = !isBlog && href.endsWith(file);
+    a.classList.toggle("active", matchBlog || matchFile);
   });
 });
