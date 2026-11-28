@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "malfahad-1-github-io",
+  "main": "worker.js",
+  "compatibility_date": "2026-11-27",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page"
+  },
+  "ai": {
+    "binding": "AI"
+  }
+}
